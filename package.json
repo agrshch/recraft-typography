@@ -40,5 +40,8 @@
         }
       ]
     }
+  },
+  "dependencies": {
+    "@figma/rest-api-spec": "^0.27.0"
   }
 }

@@ -1,17 +1,155 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" type="number" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<body>
+  <div id="preview"></div>
+
+
+  <div id="settings">
+
+    <div class="radio-group">
+      <p>APPLY TO</p>
+      <input type="radio" id="letters" value="letters" name="apply_to">
+      <label class="radio-label" for="letters">Letters</label>
+      <input type="radio" id="words" value="words" name="apply_to" checked>
+      <label class="radio-label" for="words">Words</label>
+    </div>
+
+    <div class="radio-group">
+      <p>STYLE</p>
+      <input type="radio" id="wave" value="wave" name="style" checked>
+      <label class="radio-label" for="wave">Wave</label>
+      <input type="radio" id="сylinder" value="сylinder" name="style">
+      <label class="radio-label" for="сylinder">Сylinder</label>
+      <input type="radio" id="random" value="random" name="style">
+      <label class="radio-label" for="random">Random</label>
+    </div>
+
+    <!-- <button id="apply-button">Apply</button> -->
+
+    
+  </div>
+</body>
+
+
+
+
 <script>
+  function apply(){
+    const selectedStyle = document.querySelector('input[name="style"]:checked').value;
+    const apply_to = document.querySelector('input[name="apply_to"]:checked').value;
+    parent.postMessage({ 
+      pluginMessage: { 
+        type: 'apply',
+        style: selectedStyle,
+        applyTo: apply_to,
+      } 
+    }, '*');
+  }
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-shapes', count } }, '*')
-}
+  document.querySelectorAll('.radio-label').forEach(radio => {
+    radio.addEventListener('click', ()=>{
+      setTimeout(apply,0);
+    });
+  });
 
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
+  // document.querySelectorAll('input[type="radio"]').forEach(radio => {
+  //   radio.onchange = apply;
+  // });
+
+  apply();
 
 </script>
+
+
+
+
+
+<!-- STYLES -->
+
+<style>
+  body{
+    background-color: #2C2C2C;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    color: #f0f0f0;
+    font-family: 'Inter', sans-serif;
+    /* -webkit-user-select: none; */
+    user-select: none;
+  }
+
+  #settings{
+    background-color: #1E1E1E;
+    height: 100%;
+    width: 380px;
+    min-width: 380px;
+    max-width: 380px;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+  }
+
+  button{
+    font-family: 'Inter', sans-serif;
+    color: #f0f0f0;
+    background-color: #2C2C2C;
+    padding: 13px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    outline: none;
+  }
+  button:hover{
+    background-color: #303030;
+  }
+
+  .radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+    margin: 10px 0 20px 0;
+    
+    p{
+      font-size: 9px;
+      grid-column: span 2;
+      letter-spacing: 1px;
+      margin: 0;
+    }
+
+    .radio-label{
+      background-color: #2C2C2C;
+      padding: 13px;
+      width: 100%;
+      box-sizing: border-box;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .radio-label:hover{
+      background-color: #303030;
+    }
+    input[type="radio"]:checked + .radio-label,
+    input[type="checkbox"]:checked + .radio-label {
+      background-color: #4A4A4A;
+    } 
+  }
+
+  input[type="radio"],input[type="checkbox"]{
+    display: none;
+  }
+
+  #preview{
+    display: none;
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
+
+
+
+

@@ -10,9 +10,11 @@
     "figma"
   ],
   "ui": "ui.html",
+  "permissions": ["teamlibrary"],
   "networkAccess": {
     "allowedDomains": [
-      "none"
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com"
     ]
   }
 }
