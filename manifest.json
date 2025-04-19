@@ -2,7 +2,7 @@
   "name": "Recraft Typography",
   "id": "1485980078365957648",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "dist/main.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",

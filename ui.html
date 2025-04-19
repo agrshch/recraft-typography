@@ -1,31 +1,71 @@
 <body>
-  <div id="preview"></div>
-
-
   <div id="settings">
 
-    <div class="radio-group">
+    <div id="apply_to" class="radio-group">
       <p>APPLY TO</p>
-      <input type="radio" id="letters" value="letters" name="apply_to">
+      <input type="radio" id="letters" value="letters" name="apply_to" checked>
       <label class="radio-label" for="letters">Letters</label>
-      <input type="radio" id="words" value="words" name="apply_to" checked>
+      <input type="radio" id="words" value="words" name="apply_to">
       <label class="radio-label" for="words">Words</label>
     </div>
 
-    <div class="radio-group">
-      <p>STYLE</p>
-      <input type="radio" id="wave" value="wave" name="style" checked>
+    <div id="effect_type" class="radio-group">
+      <p>Effect Type</p>
+      <input type="radio" id="wave" value="wave" name="effect_type" checked>
       <label class="radio-label" for="wave">Wave</label>
-      <input type="radio" id="сylinder" value="сylinder" name="style">
-      <label class="radio-label" for="сylinder">Сylinder</label>
-      <input type="radio" id="random" value="random" name="style">
+      <input type="radio" id="cylinder" value="cylinder" name="effect_type">
+      <label class="radio-label" for="cylinder">Сylinder</label>
+      <input type="radio" id="random" value="random" name="effect_type">
       <label class="radio-label" for="random">Random</label>
     </div>
 
-    <!-- <button id="apply-button">Apply</button> -->
+    <div id="wave_settings" class="grid radio-group wave">
+      <p>Wave Settings</p>
+      <label class="slider-label" for="length">
+        <input type="range" class="slider" id="length" min="0.2" max="1" step="0.001" value="0.5">
+        <span>Length</span>
+      </label>
+      <label class="slider-label" for="phase">
+        <input type="range" class="slider" id="phase" min="0" max="1" step="0.001" value="0.5">
+        <span>Phase</span>
+      </label>
+    </div>
 
-    
+    <div id="cylinder_settings" class="grid radio-group cylinder">
+      <p>Cylinder Settings</p>
+      <label class="slider-label" for="contrast">
+        <input type="range" class="slider" id="contrast" min="0.5" max="1" step="0.001" value="0.9">
+        <span>Contrast</span>
+      </label>
+      <label class="slider-label" for="cylinderPhase">
+        <input type="range" class="slider" id="cylinderPhase" min="0" max="1" step="0.001" value="0">
+        <span>Phase</span>
+      </label>
+    </div>
+
+    <div id="other_settings" class="grid radio-group type">
+      <p>Other Settings</p>
+      <input type="checkbox" id="hor">
+      <label class="radio-label" for="hor">Justify Horizontally</label>
+      <input type="checkbox" id="vert">
+      <label class="radio-label" for="vert">Justify Vertically</label>
+      <label class="slider-label" for="white_space" style="grid-column: span 2;">
+        <input type="range" class="slider" id="white_space" min="0" max="1" step="0.001" value="0.5">
+        <span>White Space Width</span>
+      </label>
+    </div>
+
+    <div id="iterate_btns" class="radio-group">
+      <p>Iterate</p>
+      <button id="reroll" class="radio-label">Another Variation</label>
+      <button id="randomize" class="radio-label">Randomize All</label>
+    </div>
+
+    <!-- <p id="sign">Made at <a href="https://afterimage.cc/" target="_blank">Afterimage</a></p> -->
+    <p id="sign">Made at Afterimage</p>
   </div>
+
+  
 </body>
 
 
@@ -33,13 +73,53 @@
 
 <script>
   function apply(){
-    const selectedStyle = document.querySelector('input[name="style"]:checked').value;
+    const selectedEffect = document.querySelector('input[name="effect_type"]:checked').value;
     const apply_to = document.querySelector('input[name="apply_to"]:checked').value;
+    const length = document.getElementById('length').value;
+    const phase = document.getElementById('phase').value;
+    const contrast = document.getElementById('contrast').value;
+    const cylinderPhase = document.getElementById('cylinderPhase').value;
+    const justifyHor = document.getElementById('hor').checked;
+    const justifyVert = document.getElementById('vert').checked;
+    const whiteSpace = document.getElementById('white_space').value;
     parent.postMessage({ 
       pluginMessage: { 
         type: 'apply',
-        style: selectedStyle,
+        effect: selectedEffect,
         applyTo: apply_to,
+        waveLen: length,
+        wavePhase: phase,
+        cylinderContr: contrast,
+        cylinderPhase: cylinderPhase,
+        justifyHor: justifyHor,
+        justifyVert: justifyVert,
+        whiteSpaceWidth: whiteSpace,
+      } 
+    }, '*');
+  }
+
+  function updateSpaces(){
+    const selectedEffect = document.querySelector('input[name="effect_type"]:checked').value;
+    const apply_to = document.querySelector('input[name="apply_to"]:checked').value;
+    const length = document.getElementById('length').value;
+    const phase = document.getElementById('phase').value;
+    const contrast = document.getElementById('contrast').value;
+    const cylinderPhase = document.getElementById('cylinderPhase').value;
+    const justifyHor = document.getElementById('hor').checked;
+    const justifyVert = document.getElementById('vert').checked;
+    const whiteSpace = document.getElementById('white_space').value;
+    parent.postMessage({ 
+      pluginMessage: { 
+        type: 'applySpacesOnly',
+        effect: selectedEffect,
+        applyTo: apply_to,
+        waveLen: length,
+        wavePhase: phase,
+        cylinderContr: contrast,
+        cylinderPhase: cylinderPhase,
+        justifyHor: justifyHor,
+        justifyVert: justifyVert,
+        whiteSpaceWidth: whiteSpace,
       } 
     }, '*');
   }
@@ -50,9 +130,68 @@
     });
   });
 
-  // document.querySelectorAll('input[type="radio"]').forEach(radio => {
-  //   radio.onchange = apply;
-  // });
+  document.querySelectorAll('.slider:not(#white_space)').forEach(element => {
+    element.addEventListener('change', ()=>{
+      setTimeout(apply,0);
+    });
+  });
+
+  document.getElementById('white_space').addEventListener('change', ()=>{
+      setTimeout(updateSpaces,0);
+    });
+
+  document.querySelectorAll('input[name="apply_to"]').forEach(radio => {
+    radio.addEventListener('change', manageSettingsVisibility);
+  });
+
+
+
+  document.querySelectorAll('input[name="effect_type"]').forEach(radio => {
+    radio.addEventListener('change', manageWaveCylinderRandom);
+  });
+
+  const vert = document.getElementById('vert');
+  const hor = document.getElementById('hor');
+  hor.addEventListener('change', () =>{
+    if(!hor.checked) vert.checked = false;
+  });
+  vert.addEventListener('change', () =>{
+    if(vert.checked) hor.checked = true;
+  });
+
+
+
+  function manageSettingsVisibility(){
+    const selected = document.querySelector('input[name="apply_to"]:checked').value;
+      if(selected === "letters"){
+        document.getElementById('effect_type').style.display = 'flex';
+        manageWaveCylinderRandom();
+      } else {
+        document.getElementById('effect_type').style.display = 'none';
+        document.getElementById('wave_settings').style.display = 'none';
+        document.getElementById('cylinder_settings').style.display = 'none';
+      } 
+  }
+
+  function manageWaveCylinderRandom(){
+    const selectedEffect = document.querySelector('input[name="effect_type"]:checked').value;
+    if(selectedEffect === "wave"){
+      document.getElementById('wave_settings').style.display = 'grid';
+      document.getElementById('cylinder_settings').style.display = 'none';
+    } else if (selectedEffect === "cylinder"){
+      document.getElementById('wave_settings').style.display = 'none';
+      document.getElementById('cylinder_settings').style.display = 'grid';
+    } else if (selectedEffect === "random"){
+      document.getElementById('wave_settings').style.display = 'none';
+      document.getElementById('cylinder_settings').style.display = 'none';
+    }
+  }
+
+
+
+
+
+
 
   apply();
 
@@ -66,25 +205,21 @@
 
 <style>
   body{
-    background-color: #2C2C2C;
-    padding: 10px;
-    display: flex;
-    gap: 10px;
+    /* background-color: #2C2C2C; */
+    background-color: black;
     color: #f0f0f0;
     font-family: 'Inter', sans-serif;
-    /* -webkit-user-select: none; */
     user-select: none;
   }
 
   #settings{
-    background-color: #1E1E1E;
     height: 100%;
-    width: 380px;
-    min-width: 380px;
-    max-width: 380px;
-    padding: 20px;
+    width: 100%;
+    padding: 10px;
     box-sizing: border-box;
-    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   button{
@@ -95,7 +230,7 @@
     width: 100%;
     box-sizing: border-box;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 13px;
     text-align: center;
     cursor: pointer;
     border: none;
@@ -106,16 +241,23 @@
   }
 
   .radio-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    background-color: #1E1E1E;
+    padding: 30px 10px 10px 10px;
+    box-sizing: border-box;
+    border-radius: 15px;
+    display: flex;
     gap: 5px;
-    margin: 10px 0 20px 0;
+    position: relative;
     
     p{
-      font-size: 9px;
+      font-size: 8.5px;
       grid-column: span 2;
       letter-spacing: 1px;
       margin: 0;
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      text-transform: uppercase;
     }
 
     .radio-label{
@@ -124,7 +266,7 @@
       width: 100%;
       box-sizing: border-box;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 13px;
       text-align: center;
       cursor: pointer;
     }
@@ -133,7 +275,7 @@
     }
     input[type="radio"]:checked + .radio-label,
     input[type="checkbox"]:checked + .radio-label {
-      background-color: #4A4A4A;
+      background-color: #5c5c5c;
     } 
   }
 
@@ -141,8 +283,71 @@
     display: none;
   }
 
-  #preview{
+  .radio-group.grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .slider {
+    overflow: hidden;
+    width: 100%;
+    height: 40px;
+    appearance: none;
+    background-color: #2C2C2C;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .slider::-webkit-slider-runnable-track {
+    height: 40px;
+    appearance: none;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 1px;
+    height: 190%;
+    cursor: ew-resize;
+    background: #9b9b9b;;
+    box-shadow: -300px 0 0 300px #404040;
+  }
+
+  .slider-label{
+    position: relative;
+    width: 100%;
+  }
+  
+  .slider-label > span{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    font-size: 13px;
+    text-align: center;
+    color: #f0f0f0;
+  }
+
+  #cylinder_settings{
     display: none;
+  }
+
+  #sign{
+    text-align: center;
+    width: calc(100% - 40px);
+    position: absolute;
+    bottom: 3px;
+    font-weight: 700;
+    font-size: 7.5px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #515151;
+    a{
+      color: #515151;
+      text-decoration: none;
+      cursor: pointer;
+    }
   }
 </style>
 
